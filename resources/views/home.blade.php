@@ -5,18 +5,10 @@
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
             <div class="panel panel-default">
-                <div class="panel-heading">Dashboard</div>
+                <div class="panel-heading">Convert image</div>
 
                 <div class="panel-body">
-                    {{--You are logged in!--}}
 
-
-                {{--<div>--}}
-                    {{--<h4> Your name is {{ Auth::user()->name }} </h4>--}}
-                    {{--<img src="{{ Auth::user()->getAvatar }}" height="200" width="200" />--}}
-                {{--</div>--}}
-
-                <h1 class="well well-lg">Upload Image</h1>
                 <div class="panel-body">
                     @if(isset($success))
                         <div class="alert alert-success"> {{$success}} </div>
@@ -39,7 +31,7 @@
                     </div>
 
                     <div class="form-group">
-                        {!! Form::submit('Save', array( 'class'=>'btn btn-danger form-control' )) !!}
+                        {!! Form::submit('Convert', array( 'class'=>'btn btn-danger form-control' )) !!}
                     </div>
 
                     {!! Form::close() !!}
@@ -55,3 +47,4 @@
     </div>
 </div>
 @endsection
+
