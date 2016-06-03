@@ -12,7 +12,7 @@ use Socialite;
 class AuthController extends Controller
 {
 
-    public function facebook_redirectToProvider()
+   public function facebook_redirectToProvider()
     {
         return Socialite::with('facebook')->redirect();
 
@@ -20,11 +20,14 @@ class AuthController extends Controller
 
     public function facebook_handleProviderCallback()
     {
-        $user = Socialite::with('facebook')->user();
+        $user = \Laravel\Socialite\Facades\Socialite::with('facebook')->stateless()->user();
 
-        // $user->token;
-        //$user->getName();
+        echo $user->getName();
+        return view('facebook');
     }
+
+
+
 
     public function twitter_redirectToProvider()
     {
@@ -34,70 +37,45 @@ class AuthController extends Controller
 
     public function twitter_handleProviderCallback()
     {
-        $user = Socialite::with('twitter')->user();
+        $user = Socialite::with('twitter')->stateless()->user();
 
         // $user->token;
-        //$user->getName();
+        echo $user->getName();
     }
-    /*
-    |--------------------------------------------------------------------------
-    | Registration & Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users, as well as the
-    | authentication of existing users. By default, this controller uses
-    | a simple trait to add these behaviors. Why don't you explore it?
-    |
-    */
+   
 
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
 
-    /**
-     * Where to redirect users after login / registration.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/home'; //az redaktirah :D
 
-    /**
-     * Create a new authentication controller instance.
-     *
-     * @return void
-     */
+    protected $redirectTo = '/home';
+
+    
     public function __construct()
     {
         $this->middleware('guest', ['except' => 'logout']);
     }
 
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
+    
     protected function validator(array $data)
     {
         return Validator::make($data, [
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|confirmed|min:6',
-            'lastname' => 'required|max:255'
+            'lastname' => 'required|max:255',
+
         ]);
     }
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return User
-     */
+   
     protected function create(array $data)
     {
+
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
-            'lastname'=>$data['lastname']
+            'lastname'=>$data['lastname'],
         ]);
     }
 }
