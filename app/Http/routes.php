@@ -1,36 +1,8 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Routes File
-|--------------------------------------------------------------------------
-|
-| Here is where you will register all of the routes in an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the controller to call when that URI is requested.
-|
-*/
-
-//Route::get('/', function () {
-//    return view('welcome');
-//});
-
-// Authentication routes...
-
-
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| This route group applies the "web" middleware group to every route
-| it contains. The "web" middleware group is defined in your HTTP
-| kernel and includes session state, CSRF protection, and more.
-|
-*/
-
-
 Route::group(['middleware' => 'web'], function () {
+
+   Route::get('/home', 'HomeController@index');
 
     Route::get('auth/facebook', 'Auth\AuthController@facebook_redirectToProvider');
     Route::get('auth/facebook/callback', 'Auth\AuthController@facebook_handleProviderCallback');
@@ -39,8 +11,20 @@ Route::group(['middleware' => 'web'], function () {
 
     Route::get('imageUploadForm', 'ImageController@upload' );
     Route::post('imageUploadForm', 'ImageController@store' );
+    Route::get('showLists', 'ImageController@show' );
+
     Route::get('/profile', 'ProfileController@index');
-    Route::get('/tesseract', 'TesseractController@index');
+
+    Route::get('/tesseract', 'ImageController@tesseract');
+
+    Route::get('/translate/bg', 'ImageController@bulgarian');
+    Route::get('/translate/ru', 'ImageController@russian');
+    Route::get('/translate/fr', 'ImageController@french');
+    Route::get('/translate/de', 'ImageController@german');
+    Route::get('/translate/es', 'ImageController@spanish');
+
+    Route::get('/editprofile', 'EditProfileController@index');
+    Route::post('editprofile/update',['as' => 'addentry', 'uses' => 'EditProfileController@update']);
 
     Route::auth();
         Route::get("/", function() {
@@ -48,19 +32,4 @@ Route::group(['middleware' => 'web'], function () {
 
     });
 
-    Route::get('/home', 'HomeController@index');
-
-
-
-   /* public function redirectToProvider()
-    {
-        return Socialize::with('facebook')->redirect();
-    }
-
-    public function handleProviderCallback()
-    {
-        $user = Socialize::with('facebook')->user();
-
-        // $user->token;
-    }*/
 });
