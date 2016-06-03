@@ -12,18 +12,12 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Input;
 class ImageController extends Controller
 {
-    public function upload(){
-        // Redirect to image upload form
+     public function upload(){
         return view('imageupload');
     }
 
-    /**
-     * Store a newly uploaded resource in storage.
-     *
-     * @return Response
-     */
+
     public function store(Request $request){
-        // Store records process
         $image = new Image();
         $this->validate($request, [
             'title' => 'required',
@@ -31,28 +25,72 @@ class ImageController extends Controller
         ]);
         $image->title = $request->title;
         $image->description = $request->description;
-       $image->user_id = Auth::user()->id;
+        $image->user_id = Auth::user()->id;
         if($request->hasFile('image')) {
             $file = Input::file('image');
-            //getting timestamp
             $timestamp = str_replace([' ', ':'], '-', Carbon::now()->toDateTimeString());
-
             $name = $timestamp. '-' .$file->getClientOriginalName();
-
             $image->filePath = $name;
-
             $file->move(public_path().'/images/', $name);
         }
         $image->save();
-        return $this->create()->with('success', 'Image Uploaded Successfully');
+        $returned_text=$this->tesseract($image->filePath);
+
+        return view("imageupload")->with('success', $returned_text);
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
-    public function show(){
-        // Show lists of the images
+    public function tesseract($image_path) {
+        require_once 'D:\xampp\htdocs\ocr\vendor\thiagoalessio\tesseract_ocr\TesseractOCR\TesseractOCR.php';
+
+        $tesseract = new TesseractOCR(public_path().'/images/'. $image_path);
+        $text = $tesseract->recognize();
+        Session::put('trans', $text);
+        return $text;
+    }
+
+    public function bulgarian()
+    {
+        $tr = new TranslateClient('en', 'bg');
+        $text = Session::get('trans');
+        $trans = $tr->translate($text);
+        return view("imageupload")->with(['success'=> $text, 'trans'=>$trans]);
+    }
+
+    public function russian()
+    {
+        $tr = new TranslateClient('en', 'ru');
+        $text = Session::get('trans');
+        $trans = $tr->translate($text);
+        return view("imageupload")->with(['success'=> $text, 'trans'=>$trans]);
+    }
+
+    public function french()
+    {
+        $tr = new TranslateClient('en', 'fr');
+        $text = Session::get('trans');
+        $trans = $tr->translate($text);
+        return view("imageupload")->with(['success'=> $text, 'trans'=>$trans]);
+    }
+
+    public function german()
+    {
+        $tr = new TranslateClient('en', 'de');
+        $text = Session::get('trans');
+        $trans = $tr->translate($text);
+        return view("imageupload")->with(['success'=> $text, 'trans'=>$trans]);
+    }
+
+    public function spanish()
+    {
+        $tr = new TranslateClient('en', 'es');
+        $text = Session::get('trans');
+        $trans = $tr->translate($text);
+        return view("imageupload")->with(['success'=> $text, 'trans'=>$trans]);
+    }
+
+
+    public function show(Request $request){
+        $images = Image::all();
+        return view('showLists')->with('images', $images);
     }
 }
